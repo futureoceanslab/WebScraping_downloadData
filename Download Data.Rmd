@@ -1,0 +1,148 @@
+---
+title: "Using packages to download data"
+author: "Future Oceans Lab"
+output:
+  html_document: default
+  pdf_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```
+install.packages("devtools")
+
+```
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library("devtools")
+library("tidyverse")
+library("dplyr")
+```
+
+
+## Obtaining data for research
+
+Welcome to the seminar! 
+
+Here we will learn how to download data related with our work in a automated way.
+
+
+## NOAA
+
+Data from buoys and networks such as NASA and Argo program. 
+
+Here the Git Hub repository: httpd://github.com/ropensci/rnoaa 
+
+Some examples how to download data from NOAA:
+
+- rnoaa package: meteorological data of NOAA and Argo.
+- obpgcrawler: access to data through OpeNDAP (NASA). ie. OceanColor Web.
+
+Get the station info. First you need API Key, this means that you have to go to this link : https://www.ncdc.noaa.gov/cdo-web/token and an email will be sent with your token.
+
+Here an example how it works:
+
+```
+install.packages ("rnoaa")
+install.packages ("ncdf4")
+
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library("rnoaa")
+library ("ncdf4")
+# Sargaso Sea (Galicia)
+buoy(dataset = "stdmet", buoyid = (41049), token = "kRCdMUTNVceWDNMgIpeRLsmjLkvXjeGE")
+```
+
+At this direction you can see all buoys you have: http://www.ndbc.noaa.gov/ 
+
+Also, you can get all info from a city:
+```
+ncdc_datacats(locationid = 'CITY:US390029', token = "kRCdMUTNVceWDNMgIpeRLsmjLkvXjeGE")
+```
+
+## GBIF
+
+Global Biodiversity Information Facility
+
+```
+devtools::install_github("ropensci/rgbif")
+install.packages ("rgbif")
+install.packages("openssl")
+install.packages("rgeos")
+install.packages("maps")
+
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library("rgbif")
+library("openssl")
+library("rgeos")
+library("maps")
+
+occ_count(basisOfRecord = "OBSERVATION")
+out <- name_lookup(query = "crustaceans", 
+                   rank = "PHYLUM",
+                   status = "ACCEPTED")
+
+occ_search(scientificName = "Pollicipes pollicipes", limit = 50)
+
+```
+
+Making a simple map (https://github.com/ropensci/rgbif)
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+splist <- c('Sardina pilchardus', 'Thunnus albacares', 'Merluccius merluccius')
+keys <- sapply(splist, function(x) name_backbone(name=x)$speciesKey, USE.NAMES=FALSE)
+dat <- occ_search(taxonKey = keys, limit=100, return='data', hasCoordinate=TRUE)
+library('plyr')
+datdf <- ldply(dat)
+gbifmap(datdf)
+
+```
+
+## Fishbase
+
+Link to Git Hub https://github.com/ropensci/rfishbase
+
+```
+install.packages("rfishbase")
+library("rfishbase")
+
+```
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library("rfishbase")
+Species <- read.csv("data/Species_UE.csv")
+Species2<-as.character(Species$SPECIE)
+str(Species2, vec.len = 100)
+
+#Here we copy-paste the solution and add commas to the string to run the next code
+
+a<- c("Amblyraja radiata", "Ammodytes spp.", "Argentina silus", "Beryx spp.", "Brosme brosme", "Caproidae", "Centrophorus squamosus", "Centrocymnus coelolepis", "Chaceon spp.","Chaenocephalus aceratus", "Champsocephalus gunnari", "Channichthys rhinoceratus", "Chinoecetes spp.", "Clupea harengus", "Coryphaenoides rupestris", "Dalatias licha","Deania calcea","Dicentrarchus labrax", "Dipturus batis","Dissostichus eleginoides", "Dissostichus mawsoni", "Dissostichus spp.","Engraulis encrasicolus", "Etmopterus princeps", "Etmopterus pusillus", "Euphausia superba", "Gadus morhua", "Galeorhinus galeus", "Glyptocephalus cynoglossus", "Gobionotothen gibberifrons", "Hippoglossoides platessoides", "Hippoglossus hippoglossus", "Hoplostethus atlanticus", "Illex illecebrosus","Istiophorus albicans", "Lamma nasus", "Lepidonotothen aquamifrons", "Lepidorhombus spp.", "Leucoraja naevus", "Limanda ferruginea", "Limanda limanda", "Lophiidae", "Macrourus spp.", "Makaira nigricans", "Mallotus villosus", "Manta birostris", "Martialia hyadesi","Melanogrammus aeglefinus", "Merlangius merlangus", "Merluccius merluccius", "Micromesistius poutassou", "Microstomus kitt", "Molva dypterygia", "Molva molva", "Nephrops norvegicus", "Notothenia rossi", "Pandalus borealis", "Paralomis spp", "Penaeus spp. ", "Platichthys flesus", "Pleuronectes platessa", "Pleuronectiformes", "Pollachius pollachius", "Pollachius virens", "Prionace glauca", "Psetta maxima", "Pseudochaenichthys georgianus", "Pseudopentaceros spp.", "Rostroraja alba", "Raja brachyura", "Raja circularis", "Raja clavata", "Raja fullonica", "Dipturus nidarosiensis", "Raja microocellata", "Raja montagui", "Raja undulata", "Rajiformes", "Reinhardtius hippoglossoides", "Sardina pilchardus", "Scomber scombrus", "Scophthalmus rhombus", "Sebastes spp.", "Solea solea", "Sprattus sprattus", "Squalus acanthias", "Tetrapturus albidus", "Thunnus albacares", "Thunnus maccoyii", "Thunnus obesus", "Thunnus thynnus", "Trachurus murphyi", "Trachurus spp.", "Trisopterus esmarkii", "Urophycis tenuis", "Xiphias gladius")
+
+
+dat <- species(a, fields=c("SpecCode", "PriceCateg", "Vulnerability"))
+dat
+
+resil <- stocks(a, fields="Resilience")
+sp <- merge(dat, resil)
+
+#ecosystem(species_list = NULL, fields = NULL, query = NULL, limit = 200,
+  #server = getOption("FISHBASE_API", FISHBASE_API), ...)
+````
+
+
+To finish the seminar I leave you some interesting links:
+
+An introduction to basic fisheries analysis with R - https://sfg-ucsb.github.io/fishery-manageR/
+
+Happy Git and GitHub for the useR - http://happygitwithr.com/ 
+
+DataONE. Data Observation Network on Earth. At this link you can download articles and papers related with your work using a key word. - https://search.dataone.org/#data.
+
+Enjoy!
+\
+\
+\
+\
